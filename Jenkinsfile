@@ -8,8 +8,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout')
-        {
+        stage('Checkout'){
             steps{
                 checkout scm
             }
@@ -29,11 +28,13 @@ pipeline {
                     docker.withRegistry( '', registryCredential ) { 
                         dockerImage.push() 
                     }
+                    sh "docker image rm -f $dockerImage"
                 }
                 script{
                     docker.withRegistry( '', registryCredential ) { 
                         dockerImageLatest.push() 
                     }
+                    sh "docker image rm -f $dockerImageLatest"
                 }
             }
         }
@@ -47,4 +48,5 @@ pipeline {
                 sh "docker image run -d $dockerImageLatest"
             }
         }
+    }
 }
