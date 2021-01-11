@@ -28,13 +28,13 @@ pipeline {
                     docker.withRegistry( '', registryCredential ) { 
                         dockerImage.push() 
                     }
-                    sh "docker image rm -f $dockerImage"
+                    sh "docker image rm -f $registry:$shortCommit"
                 }
                 script{
                     docker.withRegistry( '', registryCredential ) { 
                         dockerImageLatest.push() 
                     }
-                    sh "docker image rm -f $dockerImageLatest"
+                    sh "docker image rm -f $registry:latest"
                 }
             }
         }
@@ -45,7 +45,7 @@ pipeline {
                             dockerImageLatest.pull()
                     }
                 }
-                sh "docker image run -d $dockerImageLatest"
+                sh "docker image run -d $registry:latest"
             }
         }
     }
