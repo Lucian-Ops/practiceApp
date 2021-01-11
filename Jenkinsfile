@@ -45,7 +45,7 @@ pipeline {
                             dockerImageLatest.pull()
                     }
                 }
-                sh "docker image run -d $registry:latest"
+                sh "docker container run -d $registry:latest"
             }
         }
     }
