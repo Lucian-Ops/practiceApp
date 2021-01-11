@@ -10,7 +10,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'cd practiceApp; echo done;'
+                sh 'pwd'
             }
         }
         stage('Test') {
