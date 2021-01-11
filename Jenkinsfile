@@ -18,7 +18,7 @@ pipeline {
                 script { 
                     shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
                     dockerImage = docker.build registry + ":$shortCommit"
-                    dockerImageLatest = docker.build registry + ":$latest"
+                    dockerImageLatest = docker.build registry + ":latest"
                 }
             }
         }
