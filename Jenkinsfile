@@ -1,4 +1,10 @@
 pipeline {
+    environment { 
+        registry = "luciancimpeanu/practiceapp" 
+        registryCredential = 'lucian' 
+        dockerImage = '' 
+    }
+
     agent any
 
     stages {
@@ -10,12 +16,19 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'docker image build -t practiceapp:latest .'
+                shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+                script { 
+                    dockerImage = docker.build registry + ":$shortCommit" 
+                }
             }
         }
         stage('Deploy') {
-            steps {
-                sh 'docker run -d practiceapp:latest'
+           steps { 
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
+                    }
+                }
             }
         }
     }
