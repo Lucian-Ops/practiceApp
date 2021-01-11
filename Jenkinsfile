@@ -10,17 +10,12 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'pwd'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
+                sh 'docker image build -t practiceapp:latest .'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                sh 'docker run -d practiceapp:latest'
             }
         }
     }
