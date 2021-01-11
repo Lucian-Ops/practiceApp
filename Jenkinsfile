@@ -1,7 +1,7 @@
 pipeline {
     environment { 
         registry = "luciancimpeanu/practiceapp" 
-        registryCredential = 'lucian' 
+        registryCredential = 'lucian_docker' 
         dockerImage = '' 
     }
 
@@ -18,18 +18,33 @@ pipeline {
             steps {
                 script { 
                     shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-                    dockerImage = docker.build registry + ":$shortCommit" 
+                    dockerImage = docker.build registry + ":$shortCommit"
+                    dockerImageLatest = docker.build registry + ":$latest"
                 }
             }
         }
-        stage('Deploy') {
+        stage('Push') {
            steps { 
                 script { 
                     docker.withRegistry( '', registryCredential ) { 
                         dockerImage.push() 
                     }
                 }
+                script{
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImageLatest.push() 
+                    }
+                }
             }
         }
-    }
+        stage('Deploy') {
+            steps {
+                script{
+                    docker.withRegistry( '', registryCredential ) { 
+                            dockerImageLatest.pull()
+                    }
+                }
+                sh "docker image run -d $dockerImageLatest"
+            }
+        }
 }
